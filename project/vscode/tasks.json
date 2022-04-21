@@ -1,0 +1,11 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "ApplicationServerEnv",
+			"type": "shell",
+			"command": "source local_set_env.sh",
+			"problemMatcher": []
+		}
+	]
+}
