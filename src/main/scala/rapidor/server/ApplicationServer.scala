@@ -37,14 +37,18 @@ object ApplicationServer extends ZIOAppDefault:
 
   val backendPort = 8888
 
+  //override def run:zio.ZIO[rapidor.server.ApplicationServer.Environment & (zio.ZIOAppArgs & zio.Scope), Any, Any]  = {
   override def run = {
     val commonLayers = zio.Clock.live ++ Console.live ++ System.live ++ Random.live
+
+    val env = ServerChannelFactory.auto ++ EventLoopGroup.auto(8) ++ commonLayers ++ (rapidor.QuillContext.dataSourceLayer >>> TenantDataService.live)
 
     (for {
       _ <- Console.printLine(s"Server started on port ${backendPort}")
       _ <- ZIO.log(s"Server started on port ${backendPort}") 
       app <- Server.start(backendPort, getVersion(rootPath) ++ rapidor.api.HttpRoutes.tenantApp)
     } yield app)
-      .provide(ServerChannelFactory.auto, EventLoopGroup.auto(8), commonLayers, TenantDataService.live, rapidor.QuillContext.dataSourceLayer)
+      .provideLayer(env)
+      //.provide(ServerChannelFactory.auto, EventLoopGroup.auto(8), commonLayers, TenantDataService.live, rapidor.QuillContext.dataSourceLayer)
       .exitCode
   }
