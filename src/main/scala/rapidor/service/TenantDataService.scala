@@ -17,8 +17,8 @@ trait TenantDataService extends rapidor.service.BaseService:
   def getTenantByCid(uid: String): IO[RepositoryError, Option[Tenant]]
   def getAllTenants: IO[RepositoryError, List[Tenant]]
   def save(tenant: Tenant):IO[RepositoryError, Option[Tenant]] 
-  def getTenants(params: Map[String, String], columns: List[String]): IO[SQLException, List[Tenant]]
-  def getTenantsPlan(params: Map[String, String], columns: List[String]): IO[SQLException, List[String]]
+  def getTenants(params: Map[String, String], columns: List[String]): IO[RepositoryError, List[Tenant]]
+  def getTenantsPlan(params: Map[String, String], columns: List[String]): IO[RepositoryError, List[String]]
 
 object TenantDataService:
   //val live = ZLayer.fromFunction(TenantDataServiceLive.apply _)
@@ -51,5 +51,17 @@ final case class TenantDataServiceLive(ds: DataSource) extends TenantDataService
     obj <- run(tenantById(xs))
     } yield obj.headOption).provideAndLog(ds)
     
-  def getTenants(params: Map[String, String], columns: List[String]): IO[SQLException, List[Tenant]] = ???
-  def getTenantsPlan(params: Map[String, String], columns: List[String]): IO[SQLException, List[String]] = ???
+  /*
+  def getTenants(params: Map[String, String], columns: List[String]): IO[RepositoryError, List[Tenant]] =
+    if (columns.nonEmpty)
+      run(tenantsWithFiltersAndColumns(params, columns)).provideAndLog(ds)
+    else
+      run(tenantsWithFilters(params)).provideAndLog(ds)
+  def getTenantsPlan(params: Map[String, String], columns: List[String]): IO[RepositoryError, List[String]] =
+    if (columns.nonEmpty)
+      run(tenantsPlan(tenantsWithFiltersAndColumns(params, columns)), OuterSelectWrap.Never).provideAndLog(ds)
+    else
+      run(tenantsPlan(tenantsWithFilters(params)), OuterSelectWrap.Never).provideAndLog(ds)
+  */
+  def getTenants(params: Map[String, String], columns: List[String]): IO[RepositoryError, List[Tenant]] = ???
+  def getTenantsPlan(params: Map[String, String], columns: List[String]): IO[RepositoryError, List[String]] = ???

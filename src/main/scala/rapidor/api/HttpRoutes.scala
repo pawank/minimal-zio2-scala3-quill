@@ -14,16 +14,20 @@ object HttpRoutes:
   import rapidor.api.Protocol.{tenantDecoder, tenantEncoder}
 
   val tenantApp: HttpApp[TenantDataService, Throwable] = Http.collectZIO[Request] {
+    //case req @ Method.GET -> !! / "tenants" / "by-uid" / uid =>
+    //  ZIO.environment[TenantDataService].flatMap(dsl => dsl.get.getTenantByCid(uid).map(cs => Response.json(cs.toJson)))
     case req @ Method.GET -> !! / "tenants" =>
           TenantDataService
             .getAllTenants
             .either
             .map {
               case Right(data) =>
+                //println(s"Data: $data")
                 Response.json(data.toJson)
+                //Response.json(Tenants(data).toJson)
               case Left(e) =>
                 println(e.printStackTrace) 
-                Response.json(HttpServerError("CIPHER-5001", "Internal Server Error has occurred", details = Some("")).toJson)
+                Response.json(HttpServerError("CIPHER-5001", "Internal Server Error has occurred", details = Some("")).toJson).setStatus(Status.InternalServerError)
             }
     
     case Method.GET -> !! / "tenants" / "by-cid" / uid =>
@@ -36,8 +40,10 @@ object HttpRoutes:
                 case Some(data) =>
                 Response.json(tenant.toJson)
                   case _ =>
-                Response.json(HttpServerError("CIPHER-4041", s"Object with cid, $uid not found", details = Some("")).toJson)
+                Response.json(HttpServerError("CIPHER-4041", s"Object with cid, $uid not found", details = Some("")).toJson).setStatus(Status.NotFound)
               }
+                //println(s"Data: $tenant")
+                //Response.json(tenant.getOrElse(Tenant.empty).toJson)
             case Left(e)         => Response.text(e.getMessage())
           }
 
@@ -60,9 +66,10 @@ object HttpRoutes:
             )
             .mapError(e => AppError.DecodingError(e.getMessage()))
             .tapError(e => ZIO.logInfo(s"Unparseable body ${e}"))
+          //_ <- TenantDataService.save(Tenant(UUID.randomUUID.toString, "", "", "").copy(cid = body.cid, fullname = body.fullname))
           _ <- TenantDataService.save(Tenant.empty.copy(rid = Some(body.cid), name = body.fullname))
         } yield ()).either.map {
-          case Right(_) => Response.text("Ok")
-          case Left(_)  => Response.text("BadRequest")
+          case Right(_) => Response.status(Status.Created)
+          case Left(_)  => Response.status(Status.BadRequest)
         }
   }

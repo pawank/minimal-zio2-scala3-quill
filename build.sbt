@@ -24,22 +24,33 @@ lazy val root = (project in file("."))
       "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases"
     ),
     libraryDependencies ++= Seq(
+      //("io.getquill"           %% "quill-jdbc-zio"   % "3.17.0-RC2").cross(CrossVersion.for3Use2_13),
+      //("io.getquill"           %% "quill-caliban"    % "3.17.0-RC2").cross(CrossVersion.for3Use2_13),
+      //https://mvnrepository.com/artifact/io.getquill/quill-jdbc-zio
       "io.getquill"           %% "quill-jdbc-zio"   % Versions.protoquillVersion,
-      "io.getquill"           %% "quill-caliban"    % Versions.protoquillVersion,
+      //https://mvnrepository.com/artifact/io.getquill/quill-caliban
+      "io.getquill"           %% "quill-caliban"    % Versions.quillCaliban,
+      //("io.getquill"           %% "quill-jdbc-zio"   % "3.17.0.Beta3.0-RC2").cross(CrossVersion.for2_13Use3),
+      //("io.getquill"           %% "quill-caliban"    % "3.17.0.Beta3.0-RC2").cross(CrossVersion.for2_13Use3),
       "ch.qos.logback"         % "logback-classic"  % Versions.logbackClassicVersion,
       "org.postgresql"         % "postgresql"       % Versions.postgresqlVersion,
       "dev.zio"               %% "zio"              % Versions.zioVersion,
       "dev.zio"               %% "zio-test"         % Versions.zioVersion % Test,
       "com.github.ghostdogpr" %% "caliban"          % Versions.calibanVersion,
       "com.github.ghostdogpr" %% "caliban-zio-http" % Versions.calibanVersion,
-      "dev.zio"               %% "zio-json"         % Versions.zioJsonVersion, 
+      "dev.zio"               %% "zio-json"         % Versions.zioJsonVersion, // update to 0.3.0-RC3 for zio2 support
       "io.d11"                %% "zhttp"            % Versions.zioHttpVersion,
       "io.d11"                %% "zhttp-test"       % Versions.zioHttpVersion % Test,
       "net.andreinc"           % "mockneat"         % Versions.mockneatVersion,
       "org.flywaydb"                   % "flyway-core"              % Versions.flywayVersion,
       "eu.timepit" %% "refined"                 % "0.9.28",
-      ("dev.zio" %% "zio-kafka" % Versions.zioKafkaVersion).cross(CrossVersion.for3Use2_13),
+      "dev.zio" %% "zio-kafka" % Versions.zioKafkaVersion,
+      "com.github.jwt-scala"   %% "jwt-core"                % Versions.jwtCoreVersion,
+      "org.scala-lang.modules" %% "scala-collection-compat" % Versions.scalaCompactCollectionVersion,
       /*
+      ("dev.zio" %% "zio-kafka" % Versions.zioKafkaVersion).cross(CrossVersion.for3Use2_13),
+      //"dev.zio" %% "zio-sql-postgres" % Versions.zioSqlVersion,
+      //("dev.zio" %% "zio-sql-postgres" % Versions.zioSqlVersion).cross(CrossVersion.for3Use2_13),
       //config
       ("dev.zio" %% "zio-schema" % Versions.zioSchemaVersion).cross(CrossVersion.for3Use2_13),
       ("dev.zio" %% "zio-config" % Versions.zioConfigVersion).cross(CrossVersion.for3Use2_13),
